@@ -4,23 +4,31 @@ import Moveable from "react-moveable";
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [moveableId, setMoveableId] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const addMoveable = () => {
+    if(isLoading)return;
+    setIsLoading(true);
     // Create a new moveable component and add it to the array
-    const COLORS = ["red", "blue", "yellow", "green", "purple"];
-
-    setMoveableComponents([
-      ...moveableComponents,
-      {
-        id: Math.floor(Math.random() * Date.now()),
-        top: 0,
-        left: 0,
-        width: 100,
-        height: 100,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-        updateEnd: true,
-      },
-    ]);
+      fetch(`https://jsonplaceholder.typicode.com/photos?id=${moveableId}`)
+      .then((response) => response.json())
+      .then((obj) => {
+        setMoveableComponents([
+          ...moveableComponents,
+          {
+            id: moveableId,
+            top: 0,
+            left: 0,
+            width: 100,
+            height: 100,
+            imageUrl: obj[0].url,
+            updateEnd: true,
+          },
+        ]);
+        setMoveableId(moveableId + 1);
+        setIsLoading(false);
+      });
   };
 
   const updateMoveable = (id, newComponent, updateEnd = false) => {
@@ -58,7 +66,7 @@ const App = () => {
 
   return (
     <main style={{ height: "100vh", width: "100vw" }}>
-      <button onClick={addMoveable}>Add Moveable1</button>
+      <button onClick={addMoveable} disabled={isLoading}>Add Moveable1</button>
       <div
         id="parent"
         style={{
@@ -92,7 +100,7 @@ const Component = ({
   width,
   height,
   index,
-  color,
+  imageUrl,
   id,
   setSelected,
   isSelected = false,
@@ -106,7 +114,7 @@ const Component = ({
     width,
     height,
     index,
-    color,
+    imageUrl,
     id,
   });
 
@@ -131,7 +139,7 @@ const Component = ({
       left,
       width: newWidth,
       height: newHeight,
-      color,
+      imageUrl,
     });
 
     // ACTUALIZAR NODO REFERENCIA
@@ -180,7 +188,7 @@ const Component = ({
         left: absoluteLeft,
         width: newWidth,
         height: newHeight,
-        color,
+        imageUrl,
       },
       true
     );
@@ -198,7 +206,11 @@ const Component = ({
           left: left,
           width: width,
           height: height,
-          background: color,
+          overflow: "hidden",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundImage: `url(${imageUrl})`
+          
         }}
         onClick={() => setSelected(id)}
       />
@@ -213,7 +225,7 @@ const Component = ({
             left: e.left,
             width,
             height,
-            color,
+            imageUrl,
           });
         }}
         onResize={onResize}
