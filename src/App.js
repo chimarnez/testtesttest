@@ -8,10 +8,10 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const addMoveable = () => {
-    if(isLoading)return;
+    if (isLoading) return;
     setIsLoading(true);
     // Create a new moveable component and add it to the array
-      fetch(`https://jsonplaceholder.typicode.com/photos?id=${moveableId}`)
+    fetch(`https://jsonplaceholder.typicode.com/photos?id=${moveableId}`)
       .then((response) => response.json())
       .then((obj) => {
         setMoveableComponents([
@@ -66,7 +66,9 @@ const App = () => {
 
   return (
     <main style={{ height: "100vh", width: "100vw" }}>
-      <button onClick={addMoveable} disabled={isLoading}>Add Moveable1</button>
+      <button onClick={addMoveable} disabled={isLoading}>
+        Add Moveable1
+      </button>
       <div
         id="parent"
         style={{
@@ -83,7 +85,11 @@ const App = () => {
             updateMoveable={updateMoveable}
             handleResizeStart={handleResizeStart}
             setSelected={setSelected}
-            onDelete={() => setMoveableComponents(moveableComponents.filter(it => it.id !== item.id))}
+            onDelete={() =>
+              setMoveableComponents(
+                moveableComponents.filter((it) => it.id !== item.id)
+              )
+            }
             isSelected={selected === item.id}
           />
         ))}
@@ -125,7 +131,8 @@ const Component = ({
 
   const onResize = async (e) => {
     // ACTUALIZAR ALTO Y ANCHO
-    console.log(e);
+    const beforeTranslate = e.drag.beforeTranslate;
+
     let newWidth = e.width;
     let newHeight = e.height;
     const positionMaxTop = top + newHeight;
@@ -135,25 +142,38 @@ const Component = ({
       newHeight = parentBounds?.height - top;
     if (positionMaxLeft > parentBounds?.width)
       newWidth = parentBounds?.width - left;
-
-    updateMoveable(id, {
-      top,
-      left,
-      width: newWidth,
-      height: newHeight,
-      imageUrl,
-    });
+    if (top + beforeTranslate[1] >= 0 && left + beforeTranslate[0] >= 0)
+      updateMoveable(id, {
+        top,
+        left,
+        width: newWidth,
+        height: newHeight,
+        imageUrl,
+      });
 
     // ACTUALIZAR NODO REFERENCIA
-    const beforeTranslate = e.drag.beforeTranslate;
-
-    ref.current.style.width = `${e.width}px`;
-    ref.current.style.height = `${e.height}px`;
 
     let translateX = beforeTranslate[0];
     let translateY = beforeTranslate[1];
 
-    ref.current.style.transform = `translate(${translateX}px, ${translateY}px)`;
+    const updatedTop = Math.max(top + translateY, 0);
+    const updatedLeft = Math.max(left + translateX, 0);
+
+    if (left + translateX >= 0) {
+      const updatedWidth = Math.min(parentBounds.width - updatedLeft, e.width);
+      ref.current.style.width = `${updatedWidth}px`;
+    }
+    if (top + translateY >= 0) {
+      console.log(top + translateY);
+      const updatedHeight = Math.min(
+        parentBounds.height - updatedTop,
+        e.height
+      );
+      ref.current.style.height = `${updatedHeight}px`;
+    }
+
+    ref.current.style.left = `${updatedLeft}px`;
+    ref.current.style.top = `${updatedTop}px`;
 
     setNodoReferencia({
       ...nodoReferencia,
@@ -182,7 +202,7 @@ const Component = ({
 
     const absoluteTop = top + beforeTranslate[1];
     const absoluteLeft = left + beforeTranslate[0];
-    ref.current.style.transform = "";
+    // ref.current.style.transform = "";
 
     updateMoveable(
       id,
@@ -212,16 +232,13 @@ const Component = ({
           overflow: "hidden",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundImage: `url(${imageUrl})`
-          
+          backgroundImage: `url(${imageUrl})`,
         }}
         onClick={() => setSelected(id)}
       >
-        <button hidden={!isSelected}
-        onClick={onDelete}
-      >
-        Delete
-      </button>
+        <button hidden={!isSelected} onClick={onDelete}>
+          Delete
+        </button>
       </div>
       <Moveable
         target={isSelected && ref.current}
