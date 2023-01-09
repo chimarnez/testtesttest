@@ -83,6 +83,7 @@ const App = () => {
             updateMoveable={updateMoveable}
             handleResizeStart={handleResizeStart}
             setSelected={setSelected}
+            onDelete={() => setMoveableComponents(moveableComponents.filter(it => it.id !== item.id))}
             isSelected={selected === item.id}
           />
         ))}
@@ -104,6 +105,7 @@ const Component = ({
   id,
   setSelected,
   isSelected = false,
+  onDelete,
   updateEnd,
 }) => {
   const ref = useRef();
@@ -214,8 +216,13 @@ const Component = ({
           
         }}
         onClick={() => setSelected(id)}
-      />
-
+      >
+        <button hidden={!isSelected}
+        onClick={onDelete}
+      >
+        Delete
+      </button>
+      </div>
       <Moveable
         target={isSelected && ref.current}
         resizable
