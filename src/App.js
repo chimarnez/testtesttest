@@ -6,6 +6,7 @@ const App = () => {
   const [selected, setSelected] = useState(null);
   const [moveableId, setMoveableId] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const parentRef = useRef(null);
 
   const addMoveable = () => {
     if (isLoading) return;
@@ -32,10 +33,19 @@ const App = () => {
   };
 
   const updateMoveable = (id, newComponent, updateEnd = false) => {
+    const { width, height } = parentRef.current.getBoundingClientRect();
     const updatedMoveables = moveableComponents.map((moveable, i) => {
       if (moveable.id === id) {
         newComponent.top = Math.max(newComponent.top, 0);
+        newComponent.top = Math.min(
+          newComponent.top,
+          height - newComponent.height
+        );
         newComponent.left = Math.max(newComponent.left, 0);
+        newComponent.left = Math.min(
+          newComponent.left,
+          width - newComponent.width
+        );
         return { id, ...newComponent, updateEnd };
       }
       return moveable;
@@ -71,6 +81,7 @@ const App = () => {
       </button>
       <div
         id="parent"
+        ref={parentRef}
         style={{
           position: "relative",
           background: "black",
