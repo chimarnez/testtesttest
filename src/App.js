@@ -115,9 +115,9 @@ const Component = ({
 
   const onResize = async (e) => {
     // ACTUALIZAR ALTO Y ANCHO
+    console.log(e);
     let newWidth = e.width;
     let newHeight = e.height;
-
     const positionMaxTop = top + newHeight;
     const positionMaxLeft = left + newWidth;
 
@@ -172,6 +172,7 @@ const Component = ({
 
     const absoluteTop = top + beforeTranslate[1];
     const absoluteLeft = left + beforeTranslate[0];
+    ref.current.style.transform = "";
 
     updateMoveable(
       id,
@@ -217,6 +218,9 @@ const Component = ({
           });
         }}
         onResize={onResize}
+        // onResize={({ width, height, delta, direction }) => {
+        //   console.log(width, height, delta, direction);
+        // }}
         onResizeEnd={onResizeEnd}
         keepRatio={false}
         throttleResize={1}
