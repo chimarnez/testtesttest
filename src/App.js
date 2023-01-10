@@ -7,9 +7,13 @@ function getSizeValue() {
 }
 
 const App = () => {
+  // The list of moveable components
   const [moveableComponents, setMoveableComponents] = useState([]);
+  // Indicates the selected moveable components, null indicates no selection
   const [selected, setSelected] = useState(null);
+  // The current id of the moveable object to fetch, starts at 1
   const [moveableId, setMoveableId] = useState(1);
+  // Controls button to add moveable objects, while API fetches, button is blocked
   const [isLoading, setIsLoading] = useState(false);
   const parentRef = useRef(null);
 
@@ -102,6 +106,7 @@ const App = () => {
             updateMoveable={updateMoveable}
             handleResizeStart={handleResizeStart}
             setSelected={setSelected}
+            // Sets the list with all the items but the one selected
             onDelete={() =>
               setMoveableComponents(
                 moveableComponents.filter((it) => it.id !== item.id)
@@ -155,7 +160,7 @@ const Component = ({
     let newHeight = e.height;
     const positionMaxTop = top + newHeight;
     const positionMaxLeft = left + newWidth;
-
+    // Makes sure the resize operation keeps within bounds
     if (positionMaxTop > parentBounds?.height)
       newHeight = parentBounds?.height - top;
     if (positionMaxLeft > parentBounds?.width)
