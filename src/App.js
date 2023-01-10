@@ -82,7 +82,7 @@ const App = () => {
 
   return (
     <main style={{ height: "100vh", width: "100vw" }}>
-      <button onClick={addMoveable} disabled={isLoading}>
+      <button className="addButton" onClick={addMoveable} disabled={isLoading}>
         Add Moveable1
       </button>
       <div
@@ -254,7 +254,11 @@ const Component = ({
         }}
         onClick={() => setSelected(id)}
       >
-        <button hidden={!isSelected} onClick={onDelete}>
+        <button
+          className="removeButton"
+          hidden={!isSelected}
+          onClick={onDelete}
+        >
           Delete
         </button>
       </div>

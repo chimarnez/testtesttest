@@ -22,3 +22,25 @@
   border: none;
   font-size: 8px;
 }
+
+.addButton {
+  padding: 8px;
+  background-color: transparent;
+  transition: all 0.2s;
+  border: 2px solid teal;
+  color: teal;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.addButton:hover {
+  background-color: teal;
+  color: white;
+}
+
+.removeButton {
+  background-color: red;
+  color: white;
+  padding: 8px;
+  border-radius: 12px;
+}
