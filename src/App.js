@@ -1,6 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import Moveable from "react-moveable";
 
+const sizeValues = ["cover", "contain", "auto"];
+function getSizeValue() {
+  return sizeValues[Math.floor(Math.random() * sizeValues.length)];
+}
+
 const App = () => {
   const [moveableComponents, setMoveableComponents] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -25,6 +30,7 @@ const App = () => {
             height: 100,
             imageUrl: obj[0].url,
             updateEnd: true,
+            backgroundSize: getSizeValue(),
           },
         ]);
         setMoveableId(moveableId + 1);
@@ -46,7 +52,7 @@ const App = () => {
           newComponent.left,
           width - newComponent.width
         );
-        return { id, ...newComponent, updateEnd };
+        return { ...moveable, id, ...newComponent, updateEnd };
       }
       return moveable;
     });
@@ -124,6 +130,7 @@ const Component = ({
   isSelected = false,
   onDelete,
   updateEnd,
+  backgroundSize,
 }) => {
   const ref = useRef();
 
@@ -241,7 +248,7 @@ const Component = ({
           width: width,
           height: height,
           overflow: "hidden",
-          backgroundSize: "cover",
+          backgroundSize,
           backgroundPosition: "center",
           backgroundImage: `url(${imageUrl})`,
         }}
